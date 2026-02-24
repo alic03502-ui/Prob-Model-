@@ -1,5 +1,12 @@
 import streamlit as st
-from model import calculate_match
+
+st.set_page_config(page_title="Prob Model", layout="wide")
+st.title("Loading model...")
+import streamlit as st
+try:
+    from model import calculate_all_markets
+except Exception as e:
+    st.error(f"Model failed to load: {e}")
 
 st.title("Football Probability + Fair Odds Calculator")
 
