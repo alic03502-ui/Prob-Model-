@@ -1,26 +1,29 @@
 import streamlit as st
+from model import calculate_all_markets
 
-st.set_page_config(page_title="Prob Model", layout="wide")
-st.title("Loading model...")
-import streamlit as st
-try:
-    from model import calculate_all_markets
-except Exception as e:
-    st.error(f"Model failed to load: {e}")
+st.set_page_config(page_title="Football Probability Model", layout="wide")
 
-st.title("Football Probability + Fair Odds Calculator")
+st.title("⚽ Football Probability Model")
 
-home_xg = st.number_input("Home xG (home)", 0.0, 3.5, 1.4)
-home_xga = st.number_input("Home xGA (home)", 0.0, 3.5, 1.1)
-away_xg = st.number_input("Away xG (away)", 0.0, 3.5, 1.2)
-away_xga = st.number_input("Away xGA (away)", 0.0, 3.5, 1.3)
-league_avg = st.number_input("League average goals", 1.5, 3.5, 2.4)
+st.sidebar.header("Input Data")
 
-if st.button("Calculate"):
-    result = calculate_match(home_xg, home_xga, away_xg, away_xga, league_avg)
+home_xg = st.sidebar.number_input("Home xG", min_value=0.0, value=1.5, step=0.1)
+away_xg = st.sidebar.number_input("Away xG", min_value=0.0, value=1.2, step=0.1)
+league_avg = st.sidebar.number_input("League Avg Goals", min_value=0.0, value=2.5, step=0.1)
 
-    st.subheader("Match xG")
-    st.write(result["home_xg"], result["away_xg"], "Total:", result["total_xg"])
+if st.sidebar.button("Calculate"):
 
-    st.subheader("Markets")
-    st.json(result["markets"])
+    try:
+        results = calculate_all_markets(home_xg, away_xg, league_avg)
+
+        st.subheader("📊 Market Probabilities & Fair Odds")
+
+        for market, (prob, odds) in results.items():
+            col1, col2, col3 = st.columns([3, 2, 2])
+
+            col1.write(market)
+            col2.write(f"{prob*100:.2f}%")
+            col3.write(f"{odds:.2f}")
+
+    except Exception as e:
+        st.error(f"Model failed to load: {e}")
