@@ -1,7 +1,7 @@
 import math
 from scipy.stats import poisson
 
-MAX_GOALS = 10
+MAX_GOALS = 6
 
 def fair_odds(prob):
     return 1 / prob if prob > 0 else 0
