@@ -36,11 +36,6 @@ def total_prob(matrix, line):
     over = 1 - under
     return over, under
 
-def team_total_prob(xg, line):
-    under = poisson.cdf(line, xg)
-    over = 1 - under
-    return over, under
-
 def btts_prob(matrix):
     yes = 0
     for i in range(1, MAX_GOALS):
@@ -49,7 +44,12 @@ def btts_prob(matrix):
     no = 1 - yes
     return yes, no
 
-def calculate_all_markets(home_xg, away_xg, league_avg):
+def team_total_prob(xg, line):
+    under = poisson.cdf(line, xg)
+    over = 1 - under
+    return over, under
+
+def calculate_all_markets(home_xg, away_xg):
 
     matrix = score_matrix(home_xg, away_xg)
     home_win, draw, away_win = match_outcomes(matrix)
@@ -87,21 +87,15 @@ def calculate_all_markets(home_xg, away_xg, league_avg):
         results[f"Away Over {line}"] = (over_a, fair_odds(over_a))
         results[f"Away Under {line}"] = (under_a, fair_odds(under_a))
 
-    # Combos with totals
+    # Combos
     over15, _ = total_prob(matrix, 1)
     over25, _ = total_prob(matrix, 2)
 
     results["1X + Over 1.5"] = ((home_win + draw) * over15,
                                fair_odds((home_win + draw) * over15))
 
-    results["1X + Over 2.5"] = ((home_win + draw) * over25,
-                               fair_odds((home_win + draw) * over25))
-
     results["X2 + Over 1.5"] = ((away_win + draw) * over15,
                                fair_odds((away_win + draw) * over15))
-
-    results["X2 + Over 2.5"] = ((away_win + draw) * over25,
-                               fair_odds((away_win + draw) * over25))
 
     results["Home Win + Over 1.5"] = (home_win * over15,
                                      fair_odds(home_win * over15))
