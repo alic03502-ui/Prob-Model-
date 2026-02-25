@@ -12,8 +12,10 @@ away_xg = st.sidebar.number_input("Away xG", min_value=0.0, value=1.2, step=0.1)
 league_avg = st.sidebar.number_input("League Avg Goals", min_value=0.0, value=2.5, step=0.1)
 
 if st.sidebar.button("Calculate"):
+    st.session_state["run"] = True
 
-    try:
+if "run" in st.session_state: 
+    
         results = calculate_all_markets(home_xg, away_xg, league_avg)
 
         st.subheader("📊 Market Probabilities & Fair Odds")
